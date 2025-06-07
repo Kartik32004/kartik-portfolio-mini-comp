@@ -5,7 +5,7 @@ import Doom from '../applications/Doom';
 import OregonTrail from '../applications/OregonTrail';
 import ShutdownSequence from './ShutdownSequence';
 // import ThisComputer from '../applications/ThisComputer';
-import Henordle from '../applications/Henordle';
+import KartikleApp from '../applications/Henordle'; // ✅ Updated import
 import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
@@ -54,11 +54,11 @@ const APPLICATIONS: {
         shortcutIcon: 'scrabbleIcon',
         component: Scrabble,
     },
-    henordle: {
-        key: 'henordle',
-        name: 'Henordle',
-        shortcutIcon: 'henordleIcon',
-        component: Henordle,
+    kartikle: { // ✅ Updated key to lowercase
+        key: 'kartikle',
+        name: 'Kartikle', // ✅ Display name
+        shortcutIcon: 'henordleIcon', // ✅ Update if you have a new icon
+        component: KartikleApp, // ✅ Updated component
     },
     credits: {
         key: 'credits',
@@ -70,9 +70,7 @@ const APPLICATIONS: {
 
 const Desktop: React.FC<DesktopProps> = (props) => {
     const [windows, setWindows] = useState<DesktopWindows>({});
-
     const [shortcuts, setShortcuts] = useState<DesktopShortcutProps[]>([]);
-
     const [shutdown, setShutdown] = useState(false);
     const [numShutdowns, setNumShutdowns] = useState(1);
 
@@ -80,7 +78,6 @@ const Desktop: React.FC<DesktopProps> = (props) => {
         if (shutdown === true) {
             rebootDesktop();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shutdown]);
 
     useEffect(() => {
@@ -111,7 +108,6 @@ const Desktop: React.FC<DesktopProps> = (props) => {
         });
 
         setShortcuts(newShortcuts);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const rebootDesktop = useCallback(() => {
@@ -119,7 +115,6 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     }, []);
 
     const removeWindow = useCallback((key: string) => {
-        // Absolute hack and a half
         setTimeout(() => {
             setWindows((prevWindows) => {
                 const newWindows = { ...prevWindows };
@@ -203,7 +198,6 @@ const Desktop: React.FC<DesktopProps> = (props) => {
 
     return !shutdown ? (
         <div style={styles.desktop}>
-            {/* For each window in windows, loop over and render  */}
             {Object.keys(windows).map((key) => {
                 const element = windows[key].component;
                 if (!element) return <div key={`win-${key}`}></div>;
@@ -225,22 +219,20 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                 );
             })}
             <div style={styles.shortcuts}>
-                {shortcuts.map((shortcut, i) => {
-                    return (
-                        <div
-                            style={Object.assign({}, styles.shortcutContainer, {
-                                top: i * 104,
-                            })}
-                            key={shortcut.shortcutName}
-                        >
-                            <DesktopShortcut
-                                icon={shortcut.icon}
-                                shortcutName={shortcut.shortcutName}
-                                onOpen={shortcut.onOpen}
-                            />
-                        </div>
-                    );
-                })}
+                {shortcuts.map((shortcut, i) => (
+                    <div
+                        style={Object.assign({}, styles.shortcutContainer, {
+                            top: i * 104,
+                        })}
+                        key={shortcut.shortcutName}
+                    >
+                        <DesktopShortcut
+                            icon={shortcut.icon}
+                            shortcutName={shortcut.shortcutName}
+                            onOpen={shortcut.onOpen}
+                        />
+                    </div>
+                ))}
             </div>
             <Toolbar
                 windows={windows}
